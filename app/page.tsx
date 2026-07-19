@@ -1,5 +1,8 @@
 "use client"
 
+import { useState } from "react";
+import { supabase } from "./supabase";
+
 const posts = [
   {
     name: "三浦 玲奈",
@@ -28,6 +31,7 @@ const posts = [
 ];
 
 export default function Home() {
+  const [inputContent, setInputContent] = useState("");
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="mx-auto flex max-w-3xl flex-col px-4 py-6 sm:px-6 lg:px-8">
@@ -53,11 +57,24 @@ export default function Home() {
               className="w-full resize-none rounded-xl border border-slate-800 bg-slate-900 px-3 py-3 text-sm text-slate-100 outline-none focus:border-sky-500"
               rows={3}
               placeholder="今日は何をしていましたか？"
+              value={inputContent}
+              onChange={(event) => setInputContent(event.target.value)}
             />
             <div className="mt-3 flex items-center justify-between">
               <div className="text-sm text-slate-400">📷 📍 🎯</div>
               <button className="rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-400"
-                onClick={() => alert("hoge")}
+                onClick={async () => {
+                  if (inputContent.trim() === "") return;
+                  await supabase.from("posts").insert(
+                    {
+                      content: inputContent,
+                      user_id: "18a68b07-1580-4351-8a1d-8fb1d0913156"
+                    }
+                  );
+
+                  setInputContent("");
+                  alert("投稿完了しました")
+                }}
               >
                 投稿する
               </button>
