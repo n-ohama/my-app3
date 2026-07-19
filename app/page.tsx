@@ -1,65 +1,95 @@
-import Image from "next/image";
+"use client"
+
+const posts = [
+  {
+    name: "三浦 玲奈",
+    handle: "@rena",
+    time: "2時間前",
+    content:
+      "Next.js と Tailwind で、見た目も動きも気持ちよく作れるのでとても楽しいです。今のWeb開発は本当に面白いです。",
+    stats: { comments: "128", reposts: "45", likes: "2.3K" },
+  },
+  {
+    name: "青木 大地",
+    handle: "@daichi",
+    time: "4時間前",
+    content:
+      "クリエイター向けの新しいUIを考えるのが好きです。小さな細部が、体験全体の印象を大きく変えます。",
+    stats: { comments: "84", reposts: "22", likes: "1.1K" },
+  },
+  {
+    name: "木村 そら",
+    handle: "@sora",
+    time: "6時間前",
+    content:
+      "コミュニティ向けのダッシュボードを公開しました。素早く出して、すぐに改善していけるのが嬉しいです。",
+    stats: { comments: "56", reposts: "31", likes: "980" },
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="min-h-screen bg-slate-950 text-slate-100">
+      <div className="mx-auto flex max-w-3xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-lg shadow-black/20">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-semibold">タイムライン</h1>
+              <p className="text-sm text-slate-400">みんなの最新の投稿です</p>
+            </div>
+          </div>
+
+          <div className="mb-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-sky-500 font-bold text-white">
+                あ
+              </div>
+              <div>
+                <p className="font-semibold">あなた</p>
+                <p className="text-sm text-slate-400">今の気持ちを共有しましょう</p>
+              </div>
+            </div>
+            <textarea
+              className="w-full resize-none rounded-xl border border-slate-800 bg-slate-900 px-3 py-3 text-sm text-slate-100 outline-none focus:border-sky-500"
+              rows={3}
+              placeholder="今日は何をしていましたか？"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="mt-3 flex items-center justify-between">
+              <div className="text-sm text-slate-400">📷 📍 🎯</div>
+              <button className="rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-400"
+                onClick={() => alert("hoge")}
+              >
+                投稿する
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {posts.map((post) => (
+              <article key={post.handle} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                <div className="mb-3 flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 font-semibold text-slate-200">
+                    {post.name.charAt(0)}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="font-semibold">{post.name}</h2>
+                      <span className="text-sm text-slate-400">{post.handle}</span>
+                      <span className="text-sm text-slate-500">• {post.time}</span>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">{post.content}</p>
+                  </div>
+                </div>
+                <div className="flex gap-6 text-sm text-slate-400">
+                  <span>💬 {post.stats.comments}</span>
+                  <span>🔁 {post.stats.reposts}</span>
+                  <span>❤️ {post.stats.likes}</span>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
