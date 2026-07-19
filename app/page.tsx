@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "./supabase";
+import { useRouter } from "next/navigation";
 
 const posts = [
   {
@@ -31,6 +32,7 @@ const posts = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   const [inputContent, setInputContent] = useState("");
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -41,6 +43,21 @@ export default function Home() {
               <h1 className="text-xl font-semibold">タイムライン</h1>
               <p className="text-sm text-slate-400">みんなの最新の投稿です</p>
             </div>
+            <button
+              type="button"
+              onClick={async () => {
+                await fetch("/api/account", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({mode: 3})
+                });
+                
+                router.push("/login");
+              }}
+              className="rounded-full border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800"
+            >
+              ログアウト
+            </button>
           </div>
 
           <div className="mb-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
