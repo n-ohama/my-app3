@@ -7,6 +7,8 @@ export default async function Home() {
   const cookieStore = await cookies()
   const supabase = supabaseServer(cookieStore);
   const {data: {user}} = await supabase.auth.getUser();
-  if (!user) redirect('/login');
-  return <Timeline />
+  if (user === null) redirect('/login');
+
+  const {data} = await supabase.rpc("get_timeline");
+  return <Timeline user_id={user.id} posts={data} />
 }

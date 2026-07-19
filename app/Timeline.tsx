@@ -4,34 +4,8 @@ import { useState } from "react";
 import { supabase } from "./supabase";
 import { useRouter } from "next/navigation";
 
-const posts = [
-  {
-    name: "三浦 玲奈",
-    handle: "@rena",
-    time: "2時間前",
-    content:
-      "Next.js と Tailwind で、見た目も動きも気持ちよく作れるのでとても楽しいです。今のWeb開発は本当に面白いです。",
-    stats: { comments: "128", reposts: "45", likes: "2.3K" },
-  },
-  {
-    name: "青木 大地",
-    handle: "@daichi",
-    time: "4時間前",
-    content:
-      "クリエイター向けの新しいUIを考えるのが好きです。小さな細部が、体験全体の印象を大きく変えます。",
-    stats: { comments: "84", reposts: "22", likes: "1.1K" },
-  },
-  {
-    name: "木村 そら",
-    handle: "@sora",
-    time: "6時間前",
-    content:
-      "コミュニティ向けのダッシュボードを公開しました。素早く出して、すぐに改善していけるのが嬉しいです。",
-    stats: { comments: "56", reposts: "31", likes: "980" },
-  },
-];
-
-export default function Timeline() {
+type Props = { user_id: string; posts: any[]; }
+export default function Timeline({user_id, posts}: Props) {
   const router = useRouter();
   const [inputContent, setInputContent] = useState("");
   return (
@@ -85,12 +59,12 @@ export default function Timeline() {
                   await supabase.from("posts").insert(
                     {
                       content: inputContent,
-                      user_id: "18a68b07-1580-4351-8a1d-8fb1d0913156"
+                      user_id: user_id
                     }
                   );
 
                   setInputContent("");
-                  alert("投稿完了しました")
+                  router.refresh()
                 }}
               >
                 投稿する
@@ -100,7 +74,7 @@ export default function Timeline() {
 
           <div className="space-y-4">
             {posts.map((post) => (
-              <article key={post.handle} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <article key={post.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
                 <div className="mb-3 flex items-start gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 font-semibold text-slate-200">
                     {post.name.charAt(0)}
@@ -115,9 +89,9 @@ export default function Timeline() {
                   </div>
                 </div>
                 <div className="flex gap-6 text-sm text-slate-400">
-                  <span>💬 {post.stats.comments}</span>
-                  <span>🔁 {post.stats.reposts}</span>
-                  <span>❤️ {post.stats.likes}</span>
+                  <span>💬 {post.stats?.comments}</span>
+                  <span>🔁 {post.stats?.reposts}</span>
+                  <span>❤️ {post.stats?.likes}</span>
                 </div>
               </article>
             ))}
