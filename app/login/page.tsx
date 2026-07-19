@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "../supabase";
 
 export default function Login() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -12,21 +13,26 @@ export default function Login() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setMessage("");
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+  const handleSubmit = async () => {
+    const res = await fetch("/api/account", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({mode: isLogin ? 2 : 1, email, password})
     });
-
-    setIsLoading(false);
-
-    if (error) {
-      setMessage(error.message);
+    const result = await res.json();
+    if (!result.success) {
+      alert("エラーです。" + result.error);
       return;
+    }
+
+    if (!isLogin) {
+      await supabase.from("users").insert(
+        {
+          id: result.uid,
+          name: name,
+          account_id: "@HOGE",
+        }
+      );
     }
 
     router.push("/");
@@ -40,10 +46,27 @@ export default function Login() {
             E
           </div>
           <h1 className="text-2xl font-semibold">{isLogin ? "ログイン" : "サインアップ"}</h1>
-          <p className="mt-2 text-sm text-slate-400">メールアドレスとパスワードで続けます</p>
+          <p className="mt-2 text-sm text-slate-400">{!isLogin ? "名前、" : ""}メールアドレスとパスワードで続けます</p>
         </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          {!isLogin && (
+            <div>
+              <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-200">
+                名前
+              </label>
+              <input
+                id="name"
+                type="name"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                required
+                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100 outline-none transition focus:border-sky-500"
+                placeholder="名前。。。"
+              />
+            </div>
+          )}
+
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-200">
               メールアドレス
@@ -81,13 +104,13 @@ export default function Login() {
           ) : null}
 
           <button
-            type="submit"
+            onClick={handleSubmit}
             disabled={isLoading}
             className="w-full rounded-full bg-sky-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isLogin ? "ログイン" : "サインアップ"}
           </button>
-        </form>
+        </div>
 
         <p className="mt-6 text-left text-sm text-slate-400" onClick={() => setIsLogin(!isLogin)}>
           {isLogin ? "サインアップ" : "ログイン"}

@@ -2,6 +2,7 @@ import { supabaseServer } from "../../supabase";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
+  // mode: 1 ➡️ サインアップ、mode: 2 ➡️ ログイン
   const { mode, email, password } = await request.json();
   const cookieStore = await cookies();
   const supabase = supabaseServer(cookieStore);
@@ -10,6 +11,13 @@ export async function POST(request: Request) {
   // サインアップ
   if (mode === 1) {
     const { data, error } = await supabase.auth.signUp({email,password});
+    /*
+     * data: {
+     *   user: {
+     *     id: string;
+     *   }
+     * }
+     */
     if (error) {
       return Response.json({success: false, error: error.message});
     }
