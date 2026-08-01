@@ -14,7 +14,23 @@ LANGUAGE plpgsql
 SECURITY INVOKER
 AS $$
 BEGIN
-  RETURN QUERY 
+  RETURN QUERY;
+
+  WITH T0 AS (
+    SELECT 
+      post_id,
+      COUNT(*)::bigint AS likes_count,
+      jsonb_agg(jsonb_build_object('user_id', user_id)) AS likes_uid
+    FROM likes
+    GROUP BY post_id
+  ), T1 AS (
+    SELECT
+      c.post_id,
+      jsonb_agg(jsonb_build_object('comment_user_name', cu.name, 'content', c.content)) AS comments
+    FROM comments c
+    INNER JOIN users cu ON cu.id = c.user_id -- 混同を防ぐためエイリアスを cu (comment_user) に変更
+    GROUP BY c.post_id
+  )
   SELECT 
     p.id,
     p.created_at,
@@ -27,22 +43,8 @@ BEGIN
     COALESCE(c.comments, '[]'::jsonb) AS comment_agg
   FROM posts p
   INNER JOIN users u ON u.id = p.user_id
-  LEFT JOIN (
-    SELECT 
-      l.post_id,
-      COUNT(*)::bigint AS likes_count,
-      jsonb_agg(jsonb_build_object('user_id', l.user_id)) AS likes_uid -- l. を追加
-    FROM likes l -- l エイリアスを追加
-    GROUP BY l.post_id
-  ) l ON l.post_id = p.id
-  LEFT JOIN (
-    SELECT 
-      c.post_id,
-      jsonb_agg(jsonb_build_object('comment_user_name', cu.name, 'content', c.content)) AS comments -- c. と cu. を明示
-    FROM comments c
-    INNER JOIN users cu ON cu.id = c.user_id -- 混同を防ぐためエイリアスを cu (comment_user) に変更
-    GROUP BY c.post_id
-  ) c ON c.post_id = p.id
+  LEFT JOIN T0 l ON l.post_id = p.id
+  LEFT JOIN T1 c ON c.post_id = p.id
   ORDER BY p.created_at DESC;
 END;
 $$;
