@@ -14,7 +14,7 @@ LANGUAGE plpgsql
 SECURITY INVOKER
 AS $$
 BEGIN
-  RETURN QUERY;
+  RETURN QUERY
 
   WITH T0 AS (
     SELECT 
@@ -28,7 +28,7 @@ BEGIN
       c.post_id,
       jsonb_agg(jsonb_build_object('comment_user_name', cu.name, 'content', c.content)) AS comments
     FROM comments c
-    INNER JOIN users cu ON cu.id = c.user_id -- 混同を防ぐためエイリアスを cu (comment_user) に変更
+    INNER JOIN users cu ON cu.id = c.user_id
     GROUP BY c.post_id
   )
   SELECT 
@@ -48,4 +48,3 @@ BEGIN
   ORDER BY p.created_at DESC;
 END;
 $$;
-select * from get_timeline();
