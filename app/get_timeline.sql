@@ -15,13 +15,12 @@ SECURITY INVOKER
 AS $$
 BEGIN
   RETURN QUERY
-
   WITH T0 AS (
     SELECT 
       post_id,
       COUNT(*)::bigint AS likes_count,
-      jsonb_agg(jsonb_build_object('user_id', user_id)) AS likes_uid
-    FROM likes
+      jsonb_agg(jsonb_build_object('user_id', l.user_id)) AS likes_uid --RETURNS TABLEのuser_idと区別するため
+    FROM likes l
     GROUP BY post_id
   ), T1 AS (
     SELECT
