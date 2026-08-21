@@ -26,13 +26,15 @@ export default function Login() {
     }
 
     if (!isLogin) {
-      await supabase.from("users").insert(
+      const {error} = await supabase.from("users").insert(
         {
           id: result.uid,
           name: name,
-          account_id: "@HOGE",
+          account_id: "@"+email.split("@")[0].toUpperCase(),
         }
       );
+
+      if(error) console.error(error);
     }
 
     router.push("/");
